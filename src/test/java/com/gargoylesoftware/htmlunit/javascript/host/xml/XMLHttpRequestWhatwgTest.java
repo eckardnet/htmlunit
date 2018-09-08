@@ -310,6 +310,78 @@ public class XMLHttpRequestWhatwgTest extends WebDriverTestCase {
      * @throws Exception if the test fails
      */
     @Test
+    @Alerts("json")
+    public void setResponseTypeToJson() throws Exception {
+        final String html = "<html><head>\n"
+                + "<script>\n"
+                + "function test() {\n"
+                + "  var request = new XMLHttpRequest();\n"
+                + "  request.open('GET', 'foo.txt', false);\n"
+                + "  request.responseType = 'json';"
+                + "  alert(request.responseType);\n"
+                + "}\n"
+                + "</script>\n"
+                + "</head>\n"
+                + "<body onload='test()'></body></html>";
+
+        loadPageWithAlerts2(html);
+    }
+
+    /**
+     * @throws Exception if the test fails
+     */
+    @Test
+    @Alerts("")
+    public void setResponseTypeToIllegalValue() throws Exception {
+        final String html = "<html><head>\n"
+                + "<script>\n"
+                + "function test() {\n"
+                + "  var request = new XMLHttpRequest();\n"
+                + "  request.open('GET', 'foo.txt', false);\n"
+                + "  request.responseType = 'never';"
+                + "  alert(request.responseType);\n"
+                + "}\n"
+                + "</script>\n"
+                + "</head>\n"
+                + "<body onload='test()'></body></html>";
+
+        loadPageWithAlerts2(html);
+    }
+
+    /**
+     * @throws Exception if the test fails
+     */
+    @Test
+    @Alerts({"true", "true", "exception"})
+    public void setResponseTypeAfterSend() throws Exception {
+        final String html = "<html><head>\n"
+                + "<script>\n"
+                + "function test() {\n"
+                + "  var request = new XMLHttpRequest();\n"
+                + "  request.open('GET', 'foo.xml.txt', false);\n"
+                + "  request.send('');\n"
+                + "  alert(request.readyState == 4);\n"
+                + "  alert(request.responseType == '');\n"
+                + "  try {\n"
+                + "    request.responseType = 'text';\n"
+                + "    alert('overwritten');\n"
+                + "  } catch (e) { alert('exception'); }\n"
+                + "}\n"
+                + "</script>\n"
+                + "</head>\n"
+                + "<body onload='test()'></body></html>";
+
+        final URL urlPage2 = new URL(URL_FIRST, "foo.xml.txt");
+        getMockWebConnection().setResponse(urlPage2,
+                "<bla someAttr='someValue'><foo><fi id='fi1'/><fi/></foo></bla>\n",
+                "text/plain");
+        loadPageWithAlerts2(html);
+    }
+
+    /**
+     * @throws Exception if the test fails
+     */
+    @Test
     @Alerts("null")
     public void responseXML_text_html() throws Exception {
         // TODO [IE]SINGLE-VS-BULK test runs when executed as single but breaks as bulk

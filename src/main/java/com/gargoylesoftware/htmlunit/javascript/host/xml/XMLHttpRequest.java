@@ -34,15 +34,8 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.util.ArrayDeque;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Deque;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.TreeMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -132,6 +125,8 @@ public class XMLHttpRequest extends XMLHttpRequestEventTarget {
         "content-transfer-encoding", "date", "expect",
         HttpHeader.HOST_LC, "keep-alive", HttpHeader.REFERER_LC, "te", "trailer", "transfer-encoding",
         "upgrade", HttpHeader.USER_AGENT_LC, "via");
+
+    private static Set<String> LEGAL_RESPONSE_TYPES = new HashSet<>(Arrays.asList("", "arraybuffer", "blob", "document", "json", "text"));
 
     private int state_;
     private Function stateChangeHandler_;
@@ -339,6 +334,17 @@ public class XMLHttpRequest extends XMLHttpRequestEventTarget {
     @JsxGetter
     public String getResponseType() {
         return responseType_;
+    }
+
+    @JsxSetter
+    public void setResponseType(String responseType) {
+        if(LEGAL_RESPONSE_TYPES.contains(responseType)) {
+            if (state_ == LOADING || state_ == DONE) {
+                throw Context.reportRuntimeError("Property 'responseType' not writable after sent.");
+            }
+
+            responseType_ = responseType;
+        }
     }
 
         /**
