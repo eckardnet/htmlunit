@@ -94,8 +94,9 @@ import net.sourceforge.htmlunit.corejs.javascript.Undefined;
  * @author Sebastian Cato
  * @author Frank Danek
  * @author Jake Cobb
+ * @author Eckard Mühlich
  *
- * @see <a href="http://www.w3.org/TR/XMLHttpRequest/">W3C XMLHttpRequest</a>
+ * @see <a href="https://xhr.spec.whatwg.org/">https://xhr.spec.whatwg.org/</a>
  * @see <a href="http://developer.apple.com/internet/webcontent/xmlhttpreq.html">Safari documentation</a>
  */
 @JsxClass
@@ -123,7 +124,7 @@ public class XMLHttpRequest extends XMLHttpRequestEventTarget {
 
     private static final String[] ALL_PROPERTIES_ = {"onreadystatechange", "readyState", "responseText", "responseXML",
         "status", "statusText", "abort", "getAllResponseHeaders", "getResponseHeader", "open", "send",
-        "setRequestHeader"};
+        "setRequestHeader", "responseType"};
 
     private static Collection<String> PROHIBITED_HEADERS_ = Arrays.asList(
         "accept-charset", HttpHeader.ACCEPT_ENCODING_LC,
@@ -144,6 +145,7 @@ public class XMLHttpRequest extends XMLHttpRequestEventTarget {
     private HtmlPage containingPage_;
     private final boolean caseSensitiveProperties_;
     private boolean withCredentials_;
+    private String responseType_;
 
     /**
      * Creates a new instance.
@@ -160,6 +162,7 @@ public class XMLHttpRequest extends XMLHttpRequestEventTarget {
     public XMLHttpRequest(final boolean caseSensitiveProperties) {
         caseSensitiveProperties_ = caseSensitiveProperties;
         state_ = UNSENT;
+        responseType_ = "";
     }
 
     /**
@@ -333,10 +336,15 @@ public class XMLHttpRequest extends XMLHttpRequestEventTarget {
         return state_;
     }
 
-    /**
-     * Returns a string version of the data retrieved from the server.
-     * @return a string version of the data retrieved from the server
-     */
+    @JsxGetter
+    public String getResponseType() {
+        return responseType_;
+    }
+
+        /**
+         * Returns a string version of the data retrieved from the server.
+         * @return a string version of the data retrieved from the server
+         */
     @JsxGetter
     public String getResponseText() {
         if (state_ == UNSENT || state_ == OPENED) {
