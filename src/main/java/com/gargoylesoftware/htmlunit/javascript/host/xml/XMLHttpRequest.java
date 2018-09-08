@@ -347,7 +347,31 @@ public class XMLHttpRequest extends XMLHttpRequestEventTarget {
         }
     }
 
-        /**
+    /**
+     * Returns a string version of the data retrieved from the server.
+     * @return a string version of the data retrieved from the server
+     */
+    @JsxGetter
+    public String getResponse() {
+        if("".equals(responseType_) || "text".equals(responseType_)) {
+            if(state_ != LOADING && state_ != DONE) {
+                return "";
+            } else {
+                return getResponseText();
+            }
+        } else {
+            if(state_ != DONE) {
+                return null;
+            }
+        }
+        //FIXME
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("XMLHttpRequest.response was retrieved before the response was available.");
+        }
+        return "";
+    }
+
+    /**
          * Returns a string version of the data retrieved from the server.
          * @return a string version of the data retrieved from the server
          */

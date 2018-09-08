@@ -382,6 +382,29 @@ public class XMLHttpRequestWhatwgTest extends WebDriverTestCase {
      * @throws Exception if the test fails
      */
     @Test
+    @Alerts("<html></html>")
+    public void response_text_html() throws Exception {
+        final String html = HtmlPageTest.STANDARDS_MODE_PREFIX_
+                + "<html><head><title>foo</title><script>\n"
+                + "  function test() {\n"
+                + "    var xhr = new XMLHttpRequest();\n"
+                + "    xhr.open('GET', 'foo.xml', false);\n"
+                + "    xhr.send('');\n"
+                + "    try {\n"
+                + "      alert(xhr.response);\n"
+                + "    } catch(e) { alert('exception'); }\n"
+                + "  }\n"
+                + "</script></head><body onload='test()'>\n"
+                + "</body></html>";
+
+        getMockWebConnection().setDefaultResponse("<html></html>", "text/html");
+        loadPageWithAlerts2(html);
+    }
+
+    /**
+     * @throws Exception if the test fails
+     */
+    @Test
     @Alerts("null")
     public void responseXML_text_html() throws Exception {
         // TODO [IE]SINGLE-VS-BULK test runs when executed as single but breaks as bulk
